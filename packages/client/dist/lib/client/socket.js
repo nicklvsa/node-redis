@@ -153,7 +153,7 @@ _a = RedisSocket, _RedisSocket_initiator = new WeakMap(), _RedisSocket_options =
                 // https://github.com/nodejs/node/issues/31663
                 .setKeepAlive(__classPrivateFieldGet(this, _RedisSocket_options, "f").keepAlive !== false, __classPrivateFieldGet(this, _RedisSocket_options, "f").keepAlive || 0)
                 .off('error', reject)
-                .once('error', (err) => __classPrivateFieldGet(this, _RedisSocket_instances, "m", _RedisSocket_onSocketError).call(this, err))
+                .once('error', (err) => process.nextTick(() => __classPrivateFieldGet(this, _RedisSocket_instances, "m", _RedisSocket_onSocketError).call(this, err)))
                 .once('close', hadError => {
                 if (!hadError && __classPrivateFieldGet(this, _RedisSocket_isOpen, "f") && __classPrivateFieldGet(this, _RedisSocket_socket, "f") === socket) {
                     __classPrivateFieldGet(this, _RedisSocket_instances, "m", _RedisSocket_onSocketError).call(this, new errors_1.SocketClosedUnexpectedlyError());
@@ -179,10 +179,7 @@ _a = RedisSocket, _RedisSocket_initiator = new WeakMap(), _RedisSocket_options =
     };
 }, _RedisSocket_onSocketError = function _RedisSocket_onSocketError(err) {
     __classPrivateFieldSet(this, _RedisSocket_isReady, false, "f");
-    process.nextTick(() => {
-        console.log('error emitting on next tick');
-        this.emit('error', err);
-    });
+    this.emit('error', err);
     __classPrivateFieldGet(this, _RedisSocket_instances, "m", _RedisSocket_connect).call(this, 0, true).catch(() => {
         // the error was already emitted, silently ignore it
     });
