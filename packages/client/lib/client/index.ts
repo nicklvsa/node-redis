@@ -270,7 +270,10 @@ export default class RedisClient<
         return new RedisSocket(socketInitiator, this.#options?.socket)
             .on('data', chunk => this.#queue.onReplyChunk(chunk))
             .on('error', err => {
-                this.emit('error', err);
+                process.nextTick(() => {
+                    console.log('using next tick');
+                    this.emit('error', err);
+                });
                 if (this.#socket.isOpen && !this.#options?.disableOfflineQueue) {
                     this.#queue.flushWaitingForReply(err);
                 } else {
