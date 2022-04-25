@@ -179,7 +179,10 @@ export default class RedisSocket extends EventEmitter {
 
     #onSocketError(err: Error): void {
         this.#isReady = false;
-        this.emit('error', err);
+        process.nextTick(() => {
+            console.log('error emitting on next tick');
+            this.emit('error', err);
+        });
 
         this.#connect(0, true).catch(() => {
             // the error was already emitted, silently ignore it

@@ -179,7 +179,10 @@ _a = RedisSocket, _RedisSocket_initiator = new WeakMap(), _RedisSocket_options =
     };
 }, _RedisSocket_onSocketError = function _RedisSocket_onSocketError(err) {
     __classPrivateFieldSet(this, _RedisSocket_isReady, false, "f");
-    this.emit('error', err);
+    process.nextTick(() => {
+        console.log('error emitting on next tick');
+        this.emit('error', err);
+    });
     __classPrivateFieldGet(this, _RedisSocket_instances, "m", _RedisSocket_connect).call(this, 0, true).catch(() => {
         // the error was already emitted, silently ignore it
     });
