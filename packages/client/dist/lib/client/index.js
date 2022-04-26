@@ -356,6 +356,7 @@ _RedisClient_options = new WeakMap(), _RedisClient_socket = new WeakMap(), _Redi
     })
         .on('connect', () => this.emit('connect'))
         .on('ready', () => {
+        console.log('READY FROM NODE-REDIS');
         this.emit('ready');
         __classPrivateFieldGet(this, _RedisClient_instances, "m", _RedisClient_tick).call(this);
     })

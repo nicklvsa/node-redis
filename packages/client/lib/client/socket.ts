@@ -146,7 +146,7 @@ export default class RedisSocket extends EventEmitter {
                         // https://github.com/nodejs/node/issues/31663
                         .setKeepAlive(this.#options.keepAlive !== false, this.#options.keepAlive || 0)
                         .off('error', reject)
-                        .once('error', (err: Error) => process.nextTick(() => this.#onSocketError(err)))
+                        .once('error', (err: Error) => this.#onSocketError(err))
                         .once('close', hadError => {
                             if (!hadError && this.#isOpen && this.#socket === socket) {
                                 this.#onSocketError(new SocketClosedUnexpectedlyError());

@@ -282,6 +282,7 @@ export default class RedisClient<
             })
             .on('connect', () => this.emit('connect'))
             .on('ready', () => {
+                console.log('READY FROM NODE-REDIS');
                 this.emit('ready');
                 this.#tick();
             })
