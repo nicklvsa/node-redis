@@ -1,6 +1,7 @@
 import CLUSTER_COMMANDS from '../cluster/commands';
 import * as ACL_CAT from '../commands/ACL_CAT';
 import * as ACL_DELUSER from '../commands/ACL_DELUSER';
+import * as ACL_DRYRUN from '../commands/ACL_DRYRUN';
 import * as ACL_GENPASS from '../commands/ACL_GENPASS';
 import * as ACL_GETUSER from '../commands/ACL_GETUSER';
 import * as ACL_LIST from '../commands/ACL_LIST';
@@ -20,7 +21,12 @@ import * as CLIENT_GETNAME from '../commands/CLIENT_GETNAME';
 import * as CLIENT_GETREDIR from '../commands/CLIENT_GETREDIR';
 import * as CLIENT_ID from '../commands/CLIENT_ID';
 import * as CLIENT_KILL from '../commands/CLIENT_KILL';
+import * as CLIENT_NO_EVICT from '../commands/CLIENT_NO-EVICT';
+import * as CLIENT_PAUSE from '../commands/CLIENT_PAUSE';
 import * as CLIENT_SETNAME from '../commands/CLIENT_SETNAME';
+import * as CLIENT_TRACKING from '../commands/CLIENT_TRACKING';
+import * as CLIENT_TRACKINGINFO from '../commands/CLIENT_TRACKINGINFO';
+import * as CLIENT_UNPAUSE from '../commands/CLIENT_UNPAUSE';
 import * as CLIENT_INFO from '../commands/CLIENT_INFO';
 import * as CLUSTER_ADDSLOTS from '../commands/CLUSTER_ADDSLOTS';
 import * as CLUSTER_ADDSLOTSRANGE from '../commands/CLUSTER_ADDSLOTSRANGE';
@@ -76,7 +82,7 @@ import * as INFO from '../commands/INFO';
 import * as KEYS from '../commands/KEYS';
 import * as LASTSAVE from '../commands/LASTSAVE';
 import * as LOLWUT from '../commands/LOLWUT';
-import * as MEMOERY_DOCTOR from '../commands/MEMORY_DOCTOR';
+import * as MEMORY_DOCTOR from '../commands/MEMORY_DOCTOR';
 import * as MEMORY_MALLOC_STATS from '../commands/MEMORY_MALLOC-STATS';
 import * as MEMORY_PURGE from '../commands/MEMORY_PURGE';
 import * as MEMORY_STATS from '../commands/MEMORY_STATS';
@@ -115,6 +121,8 @@ export default {
     aclCat: ACL_CAT,
     ACL_DELUSER,
     aclDelUser: ACL_DELUSER,
+    ACL_DRYRUN,
+    aclDryRun: ACL_DRYRUN,
     ACL_GENPASS,
     aclGenPass: ACL_GENPASS,
     ACL_GETUSER,
@@ -153,8 +161,18 @@ export default {
     clientId: CLIENT_ID,
     CLIENT_KILL,
     clientKill: CLIENT_KILL,
+    'CLIENT_NO-EVICT': CLIENT_NO_EVICT,
+    clientNoEvict: CLIENT_NO_EVICT,
+    CLIENT_PAUSE,
+    clientPause: CLIENT_PAUSE,
     CLIENT_SETNAME,
     clientSetName: CLIENT_SETNAME,
+    CLIENT_TRACKING,
+    clientTracking: CLIENT_TRACKING,
+    CLIENT_TRACKINGINFO,
+    clientTrackingInfo: CLIENT_TRACKINGINFO,
+    CLIENT_UNPAUSE,
+    clientUnpause: CLIENT_UNPAUSE,
     CLIENT_INFO,
     clientInfo: CLIENT_INFO,
     CLUSTER_ADDSLOTS,
@@ -267,8 +285,8 @@ export default {
     latencyDoctor: LATENCY_DOCTOR,
     LOLWUT,
     lolwut: LOLWUT,
-    MEMOERY_DOCTOR,
-    memoryDoctor: MEMOERY_DOCTOR,
+    MEMORY_DOCTOR,
+    memoryDoctor: MEMORY_DOCTOR,
     'MEMORY_MALLOC-STATS': MEMORY_MALLOC_STATS,
     memoryMallocStats: MEMORY_MALLOC_STATS,
     MEMORY_PURGE,
