@@ -41,11 +41,11 @@ class RedisCluster extends events_1.EventEmitter {
         return new ((0, commander_1.attachExtensions)({
             BaseClass: RedisCluster,
             modulesExecutor: RedisCluster.prototype.commandsExecutor,
-            modules: options === null || options === void 0 ? void 0 : options.modules,
+            modules: options?.modules,
             functionsExecutor: RedisCluster.prototype.functionsExecutor,
-            functions: options === null || options === void 0 ? void 0 : options.functions,
+            functions: options?.functions,
             scriptsExecutor: RedisCluster.prototype.scriptsExecutor,
-            scripts: options === null || options === void 0 ? void 0 : options.scripts
+            scripts: options?.scripts
         }))(options);
     }
     duplicate(overrides) {
@@ -64,12 +64,12 @@ class RedisCluster extends events_1.EventEmitter {
     async sendCommand(firstKey, isReadonly, args, options) {
         return __classPrivateFieldGet(this, _RedisCluster_instances, "m", _RedisCluster_execute).call(this, firstKey, isReadonly, client => client.sendCommand(args, options));
     }
-    async functionsExecutor(fn, args) {
+    async functionsExecutor(fn, args, name) {
         const { args: redisArgs, options } = (0, commander_1.transformCommandArguments)(fn, args);
-        return (0, commander_1.transformCommandReply)(fn, await this.executeFunction(fn, args, redisArgs, options), redisArgs.preserve);
+        return (0, commander_1.transformCommandReply)(fn, await this.executeFunction(name, fn, args, redisArgs, options), redisArgs.preserve);
     }
-    async executeFunction(fn, originalArgs, redisArgs, options) {
-        return __classPrivateFieldGet(this, _RedisCluster_instances, "m", _RedisCluster_execute).call(this, RedisCluster.extractFirstKey(fn, originalArgs, redisArgs), fn.IS_READ_ONLY, client => client.executeFunction(fn, redisArgs, options));
+    async executeFunction(name, fn, originalArgs, redisArgs, options) {
+        return __classPrivateFieldGet(this, _RedisCluster_instances, "m", _RedisCluster_execute).call(this, RedisCluster.extractFirstKey(fn, originalArgs, redisArgs), fn.IS_READ_ONLY, client => client.executeFunction(name, fn, redisArgs, options));
     }
     async scriptsExecutor(script, args) {
         const { args: redisArgs, options } = (0, commander_1.transformCommandArguments)(script, args);
@@ -80,7 +80,7 @@ class RedisCluster extends events_1.EventEmitter {
     }
     multi(routing) {
         return new (__classPrivateFieldGet(this, _RedisCluster_Multi, "f"))((commands, firstKey, chainId) => {
-            return __classPrivateFieldGet(this, _RedisCluster_instances, "m", _RedisCluster_execute).call(this, firstKey, false, client => client.multiExecutor(commands, chainId));
+            return __classPrivateFieldGet(this, _RedisCluster_instances, "m", _RedisCluster_execute).call(this, firstKey, false, client => client.multiExecutor(commands, undefined, chainId));
         }, routing);
     }
     getMasters() {
@@ -98,8 +98,7 @@ class RedisCluster extends events_1.EventEmitter {
 }
 exports.default = RedisCluster;
 _RedisCluster_options = new WeakMap(), _RedisCluster_slots = new WeakMap(), _RedisCluster_Multi = new WeakMap(), _RedisCluster_instances = new WeakSet(), _RedisCluster_execute = async function _RedisCluster_execute(firstKey, isReadonly, executor) {
-    var _a, _b;
-    const maxCommandRedirections = (_a = __classPrivateFieldGet(this, _RedisCluster_options, "f").maxCommandRedirections) !== null && _a !== void 0 ? _a : 16;
+    const maxCommandRedirections = __classPrivateFieldGet(this, _RedisCluster_options, "f").maxCommandRedirections ?? 16;
     let client = __classPrivateFieldGet(this, _RedisCluster_slots, "f").getClient(firstKey, isReadonly);
     for (let i = 0;; i++) {
         try {
@@ -111,7 +110,7 @@ _RedisCluster_options = new WeakMap(), _RedisCluster_slots = new WeakMap(), _Red
             }
             if (err.message.startsWith('ASK')) {
                 const address = err.message.substring(err.message.lastIndexOf(' ') + 1);
-                if (((_b = __classPrivateFieldGet(this, _RedisCluster_slots, "f").getNodeByAddress(address)) === null || _b === void 0 ? void 0 : _b.client) === client) {
+                if (__classPrivateFieldGet(this, _RedisCluster_slots, "f").getNodeByAddress(address)?.client === client) {
                     await client.asking();
                     continue;
                 }

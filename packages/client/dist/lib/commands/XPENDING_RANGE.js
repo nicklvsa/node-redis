@@ -5,11 +5,11 @@ exports.FIRST_KEY_INDEX = 1;
 exports.IS_READ_ONLY = true;
 function transformArguments(key, group, start, end, count, options) {
     const args = ['XPENDING', key, group];
-    if (options === null || options === void 0 ? void 0 : options.IDLE) {
+    if (options?.IDLE) {
         args.push('IDLE', options.IDLE.toString());
     }
     args.push(start, end, count.toString());
-    if (options === null || options === void 0 ? void 0 : options.consumer) {
+    if (options?.consumer) {
         args.push(options.consumer);
     }
     return args;

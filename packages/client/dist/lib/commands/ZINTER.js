@@ -6,10 +6,10 @@ exports.FIRST_KEY_INDEX = 2;
 exports.IS_READ_ONLY = true;
 function transformArguments(keys, options) {
     const args = (0, generic_transformers_1.pushVerdictArgument)(['ZINTER'], keys);
-    if (options === null || options === void 0 ? void 0 : options.WEIGHTS) {
+    if (options?.WEIGHTS) {
         args.push('WEIGHTS', ...options.WEIGHTS.map(weight => weight.toString()));
     }
-    if (options === null || options === void 0 ? void 0 : options.AGGREGATE) {
+    if (options?.AGGREGATE) {
         args.push('AGGREGATE', options.AGGREGATE);
     }
     return args;

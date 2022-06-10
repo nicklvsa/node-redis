@@ -54,14 +54,15 @@ export default class RedisClient<M extends RedisModules, F extends RedisFunction
     static parseURL(url: string): RedisClientOptions;
     get options(): RedisClientOptions<M, F, S> | undefined;
     get isOpen(): boolean;
+    get isReady(): boolean;
     get v4(): Record<string, any>;
     constructor(options?: RedisClientOptions<M, F, S>);
     duplicate(overrides?: Partial<RedisClientOptions<M, F, S>>): RedisClientType<M, F, S>;
     connect(): Promise<void>;
     commandsExecutor<C extends RedisCommand>(command: C, args: Array<unknown>): Promise<RedisCommandReply<C>>;
     sendCommand<T = RedisCommandRawReply>(args: RedisCommandArguments, options?: ClientCommandOptions): Promise<T>;
-    functionsExecuter<F extends RedisFunction>(fn: F, args: Array<unknown>): Promise<RedisCommandReply<F>>;
-    executeFunction(fn: RedisFunction, args: RedisCommandArguments, options?: ClientCommandOptions): Promise<RedisCommandRawReply>;
+    functionsExecuter<F extends RedisFunction>(fn: F, args: Array<unknown>, name: string): Promise<RedisCommandReply<F>>;
+    executeFunction(name: string, fn: RedisFunction, args: RedisCommandArguments, options?: ClientCommandOptions): Promise<RedisCommandRawReply>;
     scriptsExecuter<S extends RedisScript>(script: S, args: Array<unknown>): Promise<RedisCommandReply<S>>;
     executeScript(script: RedisScript, args: RedisCommandArguments, options?: ClientCommandOptions): Promise<RedisCommandRawReply>;
     SELECT(db: number): Promise<void>;
@@ -82,7 +83,7 @@ export default class RedisClient<M extends RedisModules, F extends RedisFunction
     quit: () => Promise<void>;
     executeIsolated<T>(fn: (client: RedisClientType<M, F, S>) => T | Promise<T>): Promise<T>;
     multi(): RedisClientMultiCommandType<M, F, S>;
-    multiExecutor(commands: Array<RedisMultiQueuedCommand>, chainId?: symbol): Promise<Array<RedisCommandRawReply>>;
+    multiExecutor(commands: Array<RedisMultiQueuedCommand>, selectedDB?: number, chainId?: symbol): Promise<Array<RedisCommandRawReply>>;
     scanIterator(options?: ScanCommandOptions): AsyncIterable<string>;
     hScanIterator(key: string, options?: ScanOptions): AsyncIterable<ConvertArgumentType<HScanTuple, string>>;
     sScanIterator(key: string, options?: ScanOptions): AsyncIterable<string>;

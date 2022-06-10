@@ -26,8 +26,8 @@ class RedisMultiCommand {
             transformReply
         });
     }
-    addFunction(fn, args) {
-        const transformedArguments = (0, commander_1.fCallArguments)(fn, fn.transformArguments(...args));
+    addFunction(name, fn, args) {
+        const transformedArguments = (0, commander_1.fCallArguments)(name, fn, fn.transformArguments(...args));
         this.queue.push({
             args: transformedArguments,
             transformReply: fn.transformReply

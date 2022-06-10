@@ -10,13 +10,13 @@ function transformArguments(host, port, key, destinationDb, timeout, options) {
         args.push(key);
     }
     args.push(destinationDb.toString(), timeout.toString());
-    if (options === null || options === void 0 ? void 0 : options.COPY) {
+    if (options?.COPY) {
         args.push('COPY');
     }
-    if (options === null || options === void 0 ? void 0 : options.REPLACE) {
+    if (options?.REPLACE) {
         args.push('REPLACE');
     }
-    if (options === null || options === void 0 ? void 0 : options.AUTH) {
+    if (options?.AUTH) {
         if (options.AUTH.username) {
             args.push('AUTH2', options.AUTH.username, options.AUTH.password);
         }

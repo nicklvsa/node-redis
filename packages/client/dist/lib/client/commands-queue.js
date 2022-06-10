@@ -46,8 +46,7 @@ class RedisCommandsQueue {
         _RedisCommandsQueue_chainInExecution.set(this, void 0);
         _RedisCommandsQueue_decoder.set(this, new decoder_1.default({
             returnStringsAsBuffers: () => {
-                var _b;
-                return !!((_b = __classPrivateFieldGet(this, _RedisCommandsQueue_waitingForReply, "f").head) === null || _b === void 0 ? void 0 : _b.value.returnBuffers) ||
+                return !!__classPrivateFieldGet(this, _RedisCommandsQueue_waitingForReply, "f").head?.value.returnBuffers ||
                     __classPrivateFieldGet(this, _RedisCommandsQueue_pubSubState, "f").isActive;
             },
             onReply: reply => {
@@ -69,25 +68,25 @@ class RedisCommandsQueue {
         __classPrivateFieldSet(this, _RedisCommandsQueue_maxLength, maxLength, "f");
     }
     addCommand(args, options) {
-        var _b;
-        if (__classPrivateFieldGet(this, _RedisCommandsQueue_pubSubState, "f").isActive && !(options === null || options === void 0 ? void 0 : options.ignorePubSubMode)) {
+        console.log('NEW COMMAND ADDED TO THE QUEUE');
+        if (__classPrivateFieldGet(this, _RedisCommandsQueue_pubSubState, "f").isActive && !options?.ignorePubSubMode) {
             return Promise.reject(new Error('Cannot send commands in PubSub mode'));
         }
         else if (__classPrivateFieldGet(this, _RedisCommandsQueue_maxLength, "f") && __classPrivateFieldGet(this, _RedisCommandsQueue_waitingToBeSent, "f").length + __classPrivateFieldGet(this, _RedisCommandsQueue_waitingForReply, "f").length >= __classPrivateFieldGet(this, _RedisCommandsQueue_maxLength, "f")) {
             return Promise.reject(new Error('The queue is full'));
         }
-        else if ((_b = options === null || options === void 0 ? void 0 : options.signal) === null || _b === void 0 ? void 0 : _b.aborted) {
+        else if (options?.signal?.aborted) {
             return Promise.reject(new errors_1.AbortError());
         }
         return new Promise((resolve, reject) => {
             const node = new LinkedList.Node({
                 args,
-                chainId: options === null || options === void 0 ? void 0 : options.chainId,
-                returnBuffers: options === null || options === void 0 ? void 0 : options.returnBuffers,
+                chainId: options?.chainId,
+                returnBuffers: options?.returnBuffers,
                 resolve,
                 reject
             });
-            if (options === null || options === void 0 ? void 0 : options.signal) {
+            if (options?.signal) {
                 const listener = () => {
                     __classPrivateFieldGet(this, _RedisCommandsQueue_waitingToBeSent, "f").removeNode(node);
                     node.value.reject(new errors_1.AbortError());
@@ -101,7 +100,7 @@ class RedisCommandsQueue {
                     once: true
                 });
             }
-            if (options === null || options === void 0 ? void 0 : options.asap) {
+            if (options?.asap) {
                 __classPrivateFieldGet(this, _RedisCommandsQueue_waitingToBeSent, "f").unshiftNode(node);
             }
             else {
@@ -201,20 +200,16 @@ class RedisCommandsQueue {
         __classPrivateFieldSet(this, _RedisCommandsQueue_chainInExecution, toSend.chainId, "f");
         return encoded;
     }
-    rejectLastCommand(err) {
-        __classPrivateFieldGet(this, _RedisCommandsQueue_waitingForReply, "f").pop().reject(err);
-    }
     onReplyChunk(chunk) {
         __classPrivateFieldGet(this, _RedisCommandsQueue_decoder, "f").write(chunk);
     }
     flushWaitingForReply(err) {
-        var _b;
         __classPrivateFieldGet(this, _RedisCommandsQueue_decoder, "f").reset();
         __classPrivateFieldGet(this, _RedisCommandsQueue_pubSubState, "f").isActive = false;
         __classPrivateFieldGet(RedisCommandsQueue, _a, "m", _RedisCommandsQueue_flushQueue).call(RedisCommandsQueue, __classPrivateFieldGet(this, _RedisCommandsQueue_waitingForReply, "f"), err);
         if (!__classPrivateFieldGet(this, _RedisCommandsQueue_chainInExecution, "f"))
             return;
-        while (((_b = __classPrivateFieldGet(this, _RedisCommandsQueue_waitingToBeSent, "f").head) === null || _b === void 0 ? void 0 : _b.value.chainId) === __classPrivateFieldGet(this, _RedisCommandsQueue_chainInExecution, "f")) {
+        while (__classPrivateFieldGet(this, _RedisCommandsQueue_waitingToBeSent, "f").head?.value.chainId === __classPrivateFieldGet(this, _RedisCommandsQueue_chainInExecution, "f")) {
             __classPrivateFieldGet(this, _RedisCommandsQueue_waitingToBeSent, "f").shift();
         }
         __classPrivateFieldSet(this, _RedisCommandsQueue_chainInExecution, undefined, "f");
@@ -230,7 +225,7 @@ _a = RedisCommandsQueue, _RedisCommandsQueue_maxLength = new WeakMap(), _RedisCo
         queue.shift().reject(err);
     }
 }, _RedisCommandsQueue_emitPubSubMessage = function _RedisCommandsQueue_emitPubSubMessage(listenersMap, message, channel, pattern) {
-    const keyString = (pattern !== null && pattern !== void 0 ? pattern : channel).toString(), listeners = listenersMap.get(keyString);
+    const keyString = (pattern ?? channel).toString(), listeners = listenersMap.get(keyString);
     if (!listeners)
         return;
     for (const listener of listeners.buffers) {

@@ -24,7 +24,6 @@ export default class RedisCommandsQueue {
     unsubscribe<T extends boolean>(command: PubSubUnsubscribeCommands, channels?: string | Array<string>, listener?: PubSubListener<T>, returnBuffers?: T): Promise<void>;
     resubscribe(): Promise<any> | undefined;
     getCommandToSend(): RedisCommandArguments | undefined;
-    rejectLastCommand(err: unknown): void;
     onReplyChunk(chunk: Buffer): void;
     flushWaitingForReply(err: Error): void;
     flushAll(err: Error): void;

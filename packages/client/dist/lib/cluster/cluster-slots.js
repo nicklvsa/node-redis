@@ -60,10 +60,9 @@ class RedisClusterSlots {
         return __classPrivateFieldGet(this, _RedisClusterSlots_instances, "m", _RedisClusterSlots_getSlotClient).call(this, slot);
     }
     getMasters() {
-        var _a;
         const masters = [];
         for (const node of __classPrivateFieldGet(this, _RedisClusterSlots_nodeByAddress, "f").values()) {
-            if ((_a = node.client.options) === null || _a === void 0 ? void 0 : _a.readonly)
+            if (node.client.options?.readonly)
                 continue;
             masters.push(node);
         }
@@ -133,16 +132,15 @@ _RedisClusterSlots_options = new WeakMap(), _RedisClusterSlots_Client = new Weak
     }
     await Promise.all(promises);
 }, _RedisClusterSlots_clientOptionsDefaults = function _RedisClusterSlots_clientOptionsDefaults(options) {
-    var _a;
     if (!__classPrivateFieldGet(this, _RedisClusterSlots_options, "f").defaults)
         return options;
     return {
         ...__classPrivateFieldGet(this, _RedisClusterSlots_options, "f").defaults,
         ...options,
-        socket: __classPrivateFieldGet(this, _RedisClusterSlots_options, "f").defaults.socket && (options === null || options === void 0 ? void 0 : options.socket) ? {
+        socket: __classPrivateFieldGet(this, _RedisClusterSlots_options, "f").defaults.socket && options?.socket ? {
             ...__classPrivateFieldGet(this, _RedisClusterSlots_options, "f").defaults.socket,
             ...options.socket
-        } : (_a = __classPrivateFieldGet(this, _RedisClusterSlots_options, "f").defaults.socket) !== null && _a !== void 0 ? _a : options === null || options === void 0 ? void 0 : options.socket
+        } : __classPrivateFieldGet(this, _RedisClusterSlots_options, "f").defaults.socket ?? options?.socket
     };
 }, _RedisClusterSlots_initiateClient = function _RedisClusterSlots_initiateClient(options) {
     return new (__classPrivateFieldGet(this, _RedisClusterSlots_Client, "f"))(__classPrivateFieldGet(this, _RedisClusterSlots_instances, "m", _RedisClusterSlots_clientOptionsDefaults).call(this, options))
@@ -155,7 +153,6 @@ _RedisClusterSlots_options = new WeakMap(), _RedisClusterSlots_Client = new Weak
             return __classPrivateFieldGet(this, _RedisClusterSlots_options, "f").nodeAddressMap(address);
     }
 }, _RedisClusterSlots_initiateClientForNode = function _RedisClusterSlots_initiateClientForNode(nodeData, readonly, clientsInUse, promises) {
-    var _a;
     const address = `${nodeData.host}:${nodeData.port}`;
     clientsInUse.add(address);
     let node = __classPrivateFieldGet(this, _RedisClusterSlots_nodeByAddress, "f").get(address);
@@ -163,7 +160,7 @@ _RedisClusterSlots_options = new WeakMap(), _RedisClusterSlots_Client = new Weak
         node = {
             id: nodeData.id,
             client: __classPrivateFieldGet(this, _RedisClusterSlots_instances, "m", _RedisClusterSlots_initiateClient).call(this, {
-                socket: (_a = __classPrivateFieldGet(this, _RedisClusterSlots_instances, "m", _RedisClusterSlots_getNodeAddress).call(this, address)) !== null && _a !== void 0 ? _a : {
+                socket: __classPrivateFieldGet(this, _RedisClusterSlots_instances, "m", _RedisClusterSlots_getNodeAddress).call(this, address) ?? {
                     host: nodeData.host,
                     port: nodeData.port
                 },

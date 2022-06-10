@@ -26,8 +26,8 @@ export default class RedisCluster<M extends RedisModules, F extends RedisFunctio
     connect(): Promise<void>;
     commandsExecutor<C extends RedisCommand>(command: C, args: Array<unknown>): Promise<RedisCommandReply<C>>;
     sendCommand<T = RedisCommandRawReply>(firstKey: RedisCommandArgument | undefined, isReadonly: boolean | undefined, args: RedisCommandArguments, options?: ClientCommandOptions): Promise<T>;
-    functionsExecutor<F extends RedisFunction>(fn: F, args: Array<unknown>): Promise<RedisCommandReply<F>>;
-    executeFunction(fn: RedisFunction, originalArgs: Array<unknown>, redisArgs: RedisCommandArguments, options?: ClientCommandOptions): Promise<RedisCommandRawReply>;
+    functionsExecutor<F extends RedisFunction>(fn: F, args: Array<unknown>, name: string): Promise<RedisCommandReply<F>>;
+    executeFunction(name: string, fn: RedisFunction, originalArgs: Array<unknown>, redisArgs: RedisCommandArguments, options?: ClientCommandOptions): Promise<RedisCommandRawReply>;
     scriptsExecutor<S extends RedisScript>(script: S, args: Array<unknown>): Promise<RedisCommandReply<S>>;
     executeScript(script: RedisScript, originalArgs: Array<unknown>, redisArgs: RedisCommandArguments, options?: ClientCommandOptions): Promise<RedisCommandRawReply>;
     multi(routing?: RedisCommandArgument): RedisClusterMultiCommandType<M, F, S>;

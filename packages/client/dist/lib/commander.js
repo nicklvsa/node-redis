@@ -5,7 +5,7 @@ const command_options_1 = require("./command-options");
 function attachCommands({ BaseClass, commands, executor }) {
     for (const [name, command] of Object.entries(commands)) {
         BaseClass.prototype[name] = function (...args) {
-            return executor.call(this, command, args);
+            return executor.call(this, command, args, name);
         };
     }
 }
@@ -21,13 +21,13 @@ function attachExtensions(config) {
     }
     if (config.functions) {
         Commander = attachWithNamespaces({
-            BaseClass: Commander !== null && Commander !== void 0 ? Commander : config.BaseClass,
+            BaseClass: Commander ?? config.BaseClass,
             namespaces: config.functions,
             executor: config.functionsExecutor
         });
     }
     if (config.scripts) {
-        Commander !== null && Commander !== void 0 ? Commander : (Commander = class extends config.BaseClass {
+        Commander ?? (Commander = class extends config.BaseClass {
         });
         attachCommands({
             BaseClass: Commander,
@@ -35,7 +35,7 @@ function attachExtensions(config) {
             executor: config.scriptsExecutor
         });
     }
-    return Commander !== null && Commander !== void 0 ? Commander : config.BaseClass;
+    return Commander ?? config.BaseClass;
 }
 exports.attachExtensions = attachExtensions;
 function attachWithNamespaces({ BaseClass, namespaces, executor }) {
@@ -55,7 +55,7 @@ function attachWithNamespaces({ BaseClass, namespaces, executor }) {
         Commander.prototype[namespace] = {};
         for (const [name, command] of Object.entries(commands)) {
             Commander.prototype[namespace][name] = function (...args) {
-                return executor.call(this.self, command, args);
+                return executor.call(this.self, command, args, name);
             };
         }
     }
@@ -74,7 +74,11 @@ function transformCommandArguments(command, args) {
 }
 exports.transformCommandArguments = transformCommandArguments;
 function transformLegacyCommandArguments(args) {
-    return args.flat().map(x => { var _a; return (_a = x === null || x === void 0 ? void 0 : x.toString) === null || _a === void 0 ? void 0 : _a.call(x); });
+    return args.flat().map(arg => {
+        return typeof arg === 'number' || arg instanceof Date ?
+            arg.toString() :
+            arg;
+    });
 }
 exports.transformLegacyCommandArguments = transformLegacyCommandArguments;
 function transformCommandReply(command, rawReply, preserved) {
@@ -84,10 +88,10 @@ function transformCommandReply(command, rawReply, preserved) {
     return command.transformReply(rawReply, preserved);
 }
 exports.transformCommandReply = transformCommandReply;
-function fCallArguments(fn, args) {
+function fCallArguments(name, fn, args) {
     const actualArgs = [
         fn.IS_READ_ONLY ? 'FCALL_RO' : 'FCALL',
-        fn.NAME
+        name
     ];
     if (fn.NUMBER_OF_KEYS !== undefined) {
         actualArgs.push(fn.NUMBER_OF_KEYS.toString());

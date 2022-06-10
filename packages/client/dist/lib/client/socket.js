@@ -82,31 +82,28 @@ class RedisSocket extends events_1.EventEmitter {
         __classPrivateFieldGet(this, _RedisSocket_socket, "f").cork();
         __classPrivateFieldSet(this, _RedisSocket_isCorked, true, "f");
         queueMicrotask(() => {
-            var _b;
-            (_b = __classPrivateFieldGet(this, _RedisSocket_socket, "f")) === null || _b === void 0 ? void 0 : _b.uncork();
+            __classPrivateFieldGet(this, _RedisSocket_socket, "f")?.uncork();
             __classPrivateFieldSet(this, _RedisSocket_isCorked, false, "f");
         });
     }
 }
 exports.default = RedisSocket;
 _a = RedisSocket, _RedisSocket_initiator = new WeakMap(), _RedisSocket_options = new WeakMap(), _RedisSocket_socket = new WeakMap(), _RedisSocket_isOpen = new WeakMap(), _RedisSocket_isReady = new WeakMap(), _RedisSocket_writableNeedDrain = new WeakMap(), _RedisSocket_isCorked = new WeakMap(), _RedisSocket_instances = new WeakSet(), _RedisSocket_initiateOptions = function _RedisSocket_initiateOptions(options) {
-    var _b, _c, _d, _e, _f;
-    var _g, _h;
-    options !== null && options !== void 0 ? options : (options = {});
+    var _b, _c;
+    options ?? (options = {});
     if (!options.path) {
-        (_b = (_g = options).port) !== null && _b !== void 0 ? _b : (_g.port = 6379);
-        (_c = (_h = options).host) !== null && _c !== void 0 ? _c : (_h.host = 'localhost');
+        (_b = options).port ?? (_b.port = 6379);
+        (_c = options).host ?? (_c.host = 'localhost');
     }
-    (_d = options.connectTimeout) !== null && _d !== void 0 ? _d : (options.connectTimeout = 5000);
-    (_e = options.keepAlive) !== null && _e !== void 0 ? _e : (options.keepAlive = 5000);
-    (_f = options.noDelay) !== null && _f !== void 0 ? _f : (options.noDelay = true);
+    options.connectTimeout ?? (options.connectTimeout = 5000);
+    options.keepAlive ?? (options.keepAlive = 5000);
+    options.noDelay ?? (options.noDelay = true);
     return options;
 }, _RedisSocket_defaultReconnectStrategy = function _RedisSocket_defaultReconnectStrategy(retries) {
     return Math.min(retries * 50, 500);
 }, _RedisSocket_isTlsSocket = function _RedisSocket_isTlsSocket(options) {
     return options.tls === true;
 }, _RedisSocket_connect = async function _RedisSocket_connect(retries, hadError) {
-    var _b, _c;
     if (retries > 0 || hadError) {
         this.emit('reconnecting');
     }
@@ -128,7 +125,7 @@ _a = RedisSocket, _RedisSocket_initiator = new WeakMap(), _RedisSocket_options =
     }
     catch (err) {
         this.emit('error', err);
-        const retryIn = ((_c = (_b = __classPrivateFieldGet(this, _RedisSocket_options, "f")) === null || _b === void 0 ? void 0 : _b.reconnectStrategy) !== null && _c !== void 0 ? _c : __classPrivateFieldGet(RedisSocket, _a, "m", _RedisSocket_defaultReconnectStrategy))(retries);
+        const retryIn = (__classPrivateFieldGet(this, _RedisSocket_options, "f")?.reconnectStrategy ?? __classPrivateFieldGet(RedisSocket, _a, "m", _RedisSocket_defaultReconnectStrategy))(retries);
         if (retryIn instanceof Error) {
             __classPrivateFieldSet(this, _RedisSocket_isOpen, false, "f");
             throw new errors_1.ReconnectStrategyError(retryIn, err);

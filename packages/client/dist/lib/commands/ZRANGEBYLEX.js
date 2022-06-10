@@ -11,7 +11,7 @@ function transformArguments(key, min, max, options) {
         (0, generic_transformers_1.transformStringNumberInfinityArgument)(min),
         (0, generic_transformers_1.transformStringNumberInfinityArgument)(max)
     ];
-    if (options === null || options === void 0 ? void 0 : options.LIMIT) {
+    if (options?.LIMIT) {
         args.push('LIMIT', options.LIMIT.offset.toString(), options.LIMIT.count.toString());
     }
     return args;

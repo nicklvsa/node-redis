@@ -5,7 +5,7 @@ const generic_transformers_1 = require("./generic-transformers");
 exports.FIRST_KEY_INDEX = 1;
 function transformArguments(key, group, consumer, minIdleTime, start, options) {
     const args = ['XAUTOCLAIM', key, group, consumer, minIdleTime.toString(), start];
-    if (options === null || options === void 0 ? void 0 : options.COUNT) {
+    if (options?.COUNT) {
         args.push('COUNT', options.COUNT.toString());
     }
     return args;

@@ -8,28 +8,28 @@ function transformArguments(key, value, options) {
         key,
         typeof value === 'number' ? value.toString() : value
     ];
-    if (options === null || options === void 0 ? void 0 : options.EX) {
+    if (options?.EX) {
         args.push('EX', options.EX.toString());
     }
-    else if (options === null || options === void 0 ? void 0 : options.PX) {
+    else if (options?.PX) {
         args.push('PX', options.PX.toString());
     }
-    else if (options === null || options === void 0 ? void 0 : options.EXAT) {
+    else if (options?.EXAT) {
         args.push('EXAT', options.EXAT.toString());
     }
-    else if (options === null || options === void 0 ? void 0 : options.PXAT) {
+    else if (options?.PXAT) {
         args.push('PXAT', options.PXAT.toString());
     }
-    else if (options === null || options === void 0 ? void 0 : options.KEEPTTL) {
+    else if (options?.KEEPTTL) {
         args.push('KEEPTTL');
     }
-    if (options === null || options === void 0 ? void 0 : options.NX) {
+    if (options?.NX) {
         args.push('NX');
     }
-    else if (options === null || options === void 0 ? void 0 : options.XX) {
+    else if (options?.XX) {
         args.push('XX');
     }
-    if (options === null || options === void 0 ? void 0 : options.GET) {
+    if (options?.GET) {
         args.push('GET');
     }
     return args;

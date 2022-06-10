@@ -5,8 +5,7 @@ exports.FIRST_KEY_INDEX = 1;
 function transformArguments(...[key, value, fieldValue]) {
     const args = ['HSET', key];
     if (typeof value === 'string' || typeof value === 'number' || Buffer.isBuffer(value)) {
-        pushValue(args, value);
-        pushValue(args, fieldValue);
+        args.push(convertValue(value), convertValue(fieldValue));
     }
     else if (value instanceof Map) {
         pushMap(args, value);
@@ -22,8 +21,7 @@ function transformArguments(...[key, value, fieldValue]) {
 exports.transformArguments = transformArguments;
 function pushMap(args, map) {
     for (const [key, value] of map.entries()) {
-        pushValue(args, key);
-        pushValue(args, value);
+        args.push(convertValue(key), convertValue(value));
     }
 }
 function pushTuples(args, tuples) {
@@ -32,16 +30,16 @@ function pushTuples(args, tuples) {
             pushTuples(args, tuple);
             continue;
         }
-        pushValue(args, tuple);
+        args.push(convertValue(tuple));
     }
 }
 function pushObject(args, object) {
     for (const key of Object.keys(object)) {
-        args.push(key.toString(), object[key].toString());
+        args.push(convertValue(key), convertValue(object[key]));
     }
 }
-function pushValue(args, value) {
-    args.push(typeof value === 'number' ?
+function convertValue(value) {
+    return typeof value === 'number' ?
         value.toString() :
-        value);
+        value;
 }

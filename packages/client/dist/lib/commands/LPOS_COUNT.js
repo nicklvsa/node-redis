@@ -6,11 +6,11 @@ Object.defineProperty(exports, "FIRST_KEY_INDEX", { enumerable: true, get: funct
 Object.defineProperty(exports, "IS_READ_ONLY", { enumerable: true, get: function () { return LPOS_1.IS_READ_ONLY; } });
 function transformArguments(key, element, count, options) {
     const args = ['LPOS', key, element];
-    if (typeof (options === null || options === void 0 ? void 0 : options.RANK) === 'number') {
+    if (typeof options?.RANK === 'number') {
         args.push('RANK', options.RANK.toString());
     }
     args.push('COUNT', count.toString());
-    if (typeof (options === null || options === void 0 ? void 0 : options.MAXLEN) === 'number') {
+    if (typeof options?.MAXLEN === 'number') {
         args.push('MAXLEN', options.MAXLEN.toString());
     }
     return args;

@@ -5,7 +5,7 @@ exports.FIRST_KEY_INDEX = 1;
 exports.IS_READ_ONLY = true;
 function transformArguments(key, start, end, options) {
     const args = ['XREVRANGE', key, start, end];
-    if (options === null || options === void 0 ? void 0 : options.COUNT) {
+    if (options?.COUNT) {
         args.push('COUNT', options.COUNT.toString());
     }
     return args;

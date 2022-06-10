@@ -1,7 +1,7 @@
 import { CommandOptions } from './command-options';
-import { RedisCommand, RedisCommandArguments, RedisCommandReply, RedisFunction, RedisFunctions, RedisModules, RedisScript, RedisScripts } from './commands';
+import { RedisCommand, RedisCommandArgument, RedisCommandArguments, RedisCommandReply, RedisFunction, RedisFunctions, RedisModules, RedisScript, RedisScripts } from './commands';
 declare type Instantiable<T = any> = new (...args: Array<any>) => T;
-declare type CommandsExecutor<C extends RedisCommand = RedisCommand> = (command: C, args: Array<unknown>) => unknown;
+declare type CommandsExecutor<C extends RedisCommand = RedisCommand> = (command: C, args: Array<unknown>, name: string) => unknown;
 interface AttachCommandsConfig<C extends RedisCommand> {
     BaseClass: Instantiable;
     commands: Record<string, C>;
@@ -24,5 +24,5 @@ export declare function transformCommandArguments<T>(command: RedisCommand, args
 };
 export declare function transformLegacyCommandArguments(args: Array<any>): Array<any>;
 export declare function transformCommandReply<C extends RedisCommand>(command: C, rawReply: unknown, preserved: unknown): RedisCommandReply<C>;
-export declare function fCallArguments(fn: RedisFunction, args: RedisCommandArguments): RedisCommandArguments;
+export declare function fCallArguments(name: RedisCommandArgument, fn: RedisFunction, args: RedisCommandArguments): RedisCommandArguments;
 export {};

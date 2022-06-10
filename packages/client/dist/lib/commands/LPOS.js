@@ -5,10 +5,10 @@ exports.FIRST_KEY_INDEX = 1;
 exports.IS_READ_ONLY = true;
 function transformArguments(key, element, options) {
     const args = ['LPOS', key, element];
-    if (typeof (options === null || options === void 0 ? void 0 : options.RANK) === 'number') {
+    if (typeof options?.RANK === 'number') {
         args.push('RANK', options.RANK.toString());
     }
-    if (typeof (options === null || options === void 0 ? void 0 : options.MAXLEN) === 'number') {
+    if (typeof options?.MAXLEN === 'number') {
         args.push('MAXLEN', options.MAXLEN.toString());
     }
     return args;

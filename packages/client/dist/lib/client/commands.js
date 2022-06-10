@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const commands_1 = require("../cluster/commands");
 const ACL_CAT = require("../commands/ACL_CAT");
 const ACL_DELUSER = require("../commands/ACL_DELUSER");
+const ACL_DRYRUN = require("../commands/ACL_DRYRUN");
 const ACL_GENPASS = require("../commands/ACL_GENPASS");
 const ACL_GETUSER = require("../commands/ACL_GETUSER");
 const ACL_LIST = require("../commands/ACL_LIST");
@@ -22,7 +23,12 @@ const CLIENT_GETNAME = require("../commands/CLIENT_GETNAME");
 const CLIENT_GETREDIR = require("../commands/CLIENT_GETREDIR");
 const CLIENT_ID = require("../commands/CLIENT_ID");
 const CLIENT_KILL = require("../commands/CLIENT_KILL");
+const CLIENT_NO_EVICT = require("../commands/CLIENT_NO-EVICT");
+const CLIENT_PAUSE = require("../commands/CLIENT_PAUSE");
 const CLIENT_SETNAME = require("../commands/CLIENT_SETNAME");
+const CLIENT_TRACKING = require("../commands/CLIENT_TRACKING");
+const CLIENT_TRACKINGINFO = require("../commands/CLIENT_TRACKINGINFO");
+const CLIENT_UNPAUSE = require("../commands/CLIENT_UNPAUSE");
 const CLIENT_INFO = require("../commands/CLIENT_INFO");
 const CLUSTER_ADDSLOTS = require("../commands/CLUSTER_ADDSLOTS");
 const CLUSTER_ADDSLOTSRANGE = require("../commands/CLUSTER_ADDSLOTSRANGE");
@@ -78,7 +84,7 @@ const INFO = require("../commands/INFO");
 const KEYS = require("../commands/KEYS");
 const LASTSAVE = require("../commands/LASTSAVE");
 const LOLWUT = require("../commands/LOLWUT");
-const MEMOERY_DOCTOR = require("../commands/MEMORY_DOCTOR");
+const MEMORY_DOCTOR = require("../commands/MEMORY_DOCTOR");
 const MEMORY_MALLOC_STATS = require("../commands/MEMORY_MALLOC-STATS");
 const MEMORY_PURGE = require("../commands/MEMORY_PURGE");
 const MEMORY_STATS = require("../commands/MEMORY_STATS");
@@ -116,6 +122,8 @@ exports.default = {
     aclCat: ACL_CAT,
     ACL_DELUSER,
     aclDelUser: ACL_DELUSER,
+    ACL_DRYRUN,
+    aclDryRun: ACL_DRYRUN,
     ACL_GENPASS,
     aclGenPass: ACL_GENPASS,
     ACL_GETUSER,
@@ -154,8 +162,18 @@ exports.default = {
     clientId: CLIENT_ID,
     CLIENT_KILL,
     clientKill: CLIENT_KILL,
+    'CLIENT_NO-EVICT': CLIENT_NO_EVICT,
+    clientNoEvict: CLIENT_NO_EVICT,
+    CLIENT_PAUSE,
+    clientPause: CLIENT_PAUSE,
     CLIENT_SETNAME,
     clientSetName: CLIENT_SETNAME,
+    CLIENT_TRACKING,
+    clientTracking: CLIENT_TRACKING,
+    CLIENT_TRACKINGINFO,
+    clientTrackingInfo: CLIENT_TRACKINGINFO,
+    CLIENT_UNPAUSE,
+    clientUnpause: CLIENT_UNPAUSE,
     CLIENT_INFO,
     clientInfo: CLIENT_INFO,
     CLUSTER_ADDSLOTS,
@@ -268,8 +286,8 @@ exports.default = {
     latencyDoctor: LATENCY_DOCTOR,
     LOLWUT,
     lolwut: LOLWUT,
-    MEMOERY_DOCTOR,
-    memoryDoctor: MEMOERY_DOCTOR,
+    MEMORY_DOCTOR,
+    memoryDoctor: MEMORY_DOCTOR,
     'MEMORY_MALLOC-STATS': MEMORY_MALLOC_STATS,
     memoryMallocStats: MEMORY_MALLOC_STATS,
     MEMORY_PURGE,

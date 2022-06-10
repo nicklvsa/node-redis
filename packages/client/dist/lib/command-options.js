@@ -8,6 +8,6 @@ function commandOptions(options) {
 }
 exports.commandOptions = commandOptions;
 function isCommandOptions(options) {
-    return (options === null || options === void 0 ? void 0 : options[symbol]) === true;
+    return options?.[symbol] === true;
 }
 exports.isCommandOptions = isCommandOptions;

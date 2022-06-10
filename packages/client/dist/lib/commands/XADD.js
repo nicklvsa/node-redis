@@ -4,10 +4,10 @@ exports.transformArguments = exports.FIRST_KEY_INDEX = void 0;
 exports.FIRST_KEY_INDEX = 1;
 function transformArguments(key, id, message, options) {
     const args = ['XADD', key];
-    if (options === null || options === void 0 ? void 0 : options.NOMKSTREAM) {
+    if (options?.NOMKSTREAM) {
         args.push('NOMKSTREAM');
     }
-    if (options === null || options === void 0 ? void 0 : options.TRIM) {
+    if (options?.TRIM) {
         if (options.TRIM.strategy) {
             args.push(options.TRIM.strategy);
         }

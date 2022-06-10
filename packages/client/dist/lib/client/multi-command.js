@@ -10,7 +10,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _RedisClientMultiCommand_instances, _RedisClientMultiCommand_multi, _RedisClientMultiCommand_executor, _RedisClientMultiCommand_legacyMode, _RedisClientMultiCommand_defineLegacyCommand;
+var _RedisClientMultiCommand_instances, _RedisClientMultiCommand_multi, _RedisClientMultiCommand_executor, _RedisClientMultiCommand_selectedDB, _RedisClientMultiCommand_legacyMode, _RedisClientMultiCommand_defineLegacyCommand;
 Object.defineProperty(exports, "__esModule", { value: true });
 const commands_1 = require("./commands");
 const multi_command_1 = require("../multi-command");
@@ -25,6 +25,13 @@ class RedisClientMultiCommand {
             configurable: true,
             writable: true,
             value: {}
+        });
+        _RedisClientMultiCommand_selectedDB.set(this, void 0);
+        Object.defineProperty(this, "select", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: this.SELECT
         });
         Object.defineProperty(this, "EXEC", {
             enumerable: true,
@@ -41,22 +48,26 @@ class RedisClientMultiCommand {
         return (0, commander_1.attachExtensions)({
             BaseClass: RedisClientMultiCommand,
             modulesExecutor: RedisClientMultiCommand.prototype.commandsExecutor,
-            modules: extensions === null || extensions === void 0 ? void 0 : extensions.modules,
+            modules: extensions?.modules,
             functionsExecutor: RedisClientMultiCommand.prototype.functionsExecutor,
-            functions: extensions === null || extensions === void 0 ? void 0 : extensions.functions,
+            functions: extensions?.functions,
             scriptsExecutor: RedisClientMultiCommand.prototype.scriptsExecutor,
-            scripts: extensions === null || extensions === void 0 ? void 0 : extensions.scripts
+            scripts: extensions?.scripts
         });
     }
     commandsExecutor(command, args) {
         return this.addCommand(command.transformArguments(...args), command.transformReply);
     }
+    SELECT(db, transformReply) {
+        __classPrivateFieldSet(this, _RedisClientMultiCommand_selectedDB, db, "f");
+        return this.addCommand(['SELECT', db.toString()], transformReply);
+    }
     addCommand(args, transformReply) {
         __classPrivateFieldGet(this, _RedisClientMultiCommand_multi, "f").addCommand(args, transformReply);
         return this;
     }
-    functionsExecutor(fn, args) {
-        __classPrivateFieldGet(this, _RedisClientMultiCommand_multi, "f").addFunction(fn, args);
+    functionsExecutor(fn, args, name) {
+        __classPrivateFieldGet(this, _RedisClientMultiCommand_multi, "f").addFunction(name, fn, args);
         return this;
     }
     scriptsExecutor(script, args) {
@@ -70,14 +81,14 @@ class RedisClientMultiCommand {
         const commands = __classPrivateFieldGet(this, _RedisClientMultiCommand_multi, "f").exec();
         if (!commands)
             return [];
-        return __classPrivateFieldGet(this, _RedisClientMultiCommand_multi, "f").handleExecReplies(await __classPrivateFieldGet(this, _RedisClientMultiCommand_executor, "f").call(this, commands, multi_command_1.default.generateChainId()));
+        return __classPrivateFieldGet(this, _RedisClientMultiCommand_multi, "f").handleExecReplies(await __classPrivateFieldGet(this, _RedisClientMultiCommand_executor, "f").call(this, commands, __classPrivateFieldGet(this, _RedisClientMultiCommand_selectedDB, "f"), multi_command_1.default.generateChainId()));
     }
     async execAsPipeline() {
-        return __classPrivateFieldGet(this, _RedisClientMultiCommand_multi, "f").transformReplies(await __classPrivateFieldGet(this, _RedisClientMultiCommand_executor, "f").call(this, __classPrivateFieldGet(this, _RedisClientMultiCommand_multi, "f").queue));
+        return __classPrivateFieldGet(this, _RedisClientMultiCommand_multi, "f").transformReplies(await __classPrivateFieldGet(this, _RedisClientMultiCommand_executor, "f").call(this, __classPrivateFieldGet(this, _RedisClientMultiCommand_multi, "f").queue, __classPrivateFieldGet(this, _RedisClientMultiCommand_selectedDB, "f")));
     }
 }
 exports.default = RedisClientMultiCommand;
-_RedisClientMultiCommand_multi = new WeakMap(), _RedisClientMultiCommand_executor = new WeakMap(), _RedisClientMultiCommand_instances = new WeakSet(), _RedisClientMultiCommand_legacyMode = function _RedisClientMultiCommand_legacyMode() {
+_RedisClientMultiCommand_multi = new WeakMap(), _RedisClientMultiCommand_executor = new WeakMap(), _RedisClientMultiCommand_selectedDB = new WeakMap(), _RedisClientMultiCommand_instances = new WeakSet(), _RedisClientMultiCommand_legacyMode = function _RedisClientMultiCommand_legacyMode() {
     this.v4.addCommand = this.addCommand.bind(this);
     this.addCommand = (...args) => {
         __classPrivateFieldGet(this, _RedisClientMultiCommand_multi, "f").addCommand((0, commander_1.transformLegacyCommandArguments)(args));

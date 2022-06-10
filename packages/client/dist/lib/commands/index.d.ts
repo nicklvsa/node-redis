@@ -28,7 +28,6 @@ export interface RedisModules {
     [module: string]: RedisModule;
 }
 export interface RedisFunction extends RedisCommand {
-    NAME: string;
     NUMBER_OF_KEYS?: number;
 }
 export interface RedisFunctionLibrary {

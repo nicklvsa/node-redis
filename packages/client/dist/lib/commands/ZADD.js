@@ -5,24 +5,24 @@ const generic_transformers_1 = require("./generic-transformers");
 exports.FIRST_KEY_INDEX = 1;
 function transformArguments(key, members, options) {
     const args = ['ZADD', key];
-    if (options === null || options === void 0 ? void 0 : options.NX) {
+    if (options?.NX) {
         args.push('NX');
     }
     else {
-        if (options === null || options === void 0 ? void 0 : options.XX) {
+        if (options?.XX) {
             args.push('XX');
         }
-        if (options === null || options === void 0 ? void 0 : options.GT) {
+        if (options?.GT) {
             args.push('GT');
         }
-        else if (options === null || options === void 0 ? void 0 : options.LT) {
+        else if (options?.LT) {
             args.push('LT');
         }
     }
-    if (options === null || options === void 0 ? void 0 : options.CH) {
+    if (options?.CH) {
         args.push('CH');
     }
-    if (options === null || options === void 0 ? void 0 : options.INCR) {
+    if (options?.INCR) {
         args.push('INCR');
     }
     for (const { score, value } of (Array.isArray(members) ? members : [members])) {

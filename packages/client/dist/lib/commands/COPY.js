@@ -4,10 +4,10 @@ exports.transformReply = exports.transformArguments = exports.FIRST_KEY_INDEX = 
 exports.FIRST_KEY_INDEX = 1;
 function transformArguments(source, destination, options) {
     const args = ['COPY', source, destination];
-    if (options === null || options === void 0 ? void 0 : options.destinationDb) {
+    if (options?.destinationDb) {
         args.push('DB', options.destinationDb.toString());
     }
-    if (options === null || options === void 0 ? void 0 : options.replace) {
+    if (options?.replace) {
         args.push('REPLACE');
     }
     return args;

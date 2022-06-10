@@ -8,10 +8,10 @@ exports.FIRST_KEY_INDEX = FIRST_KEY_INDEX;
 exports.IS_READ_ONLY = true;
 function transformArguments(streams, options) {
     const args = ['XREAD'];
-    if (options === null || options === void 0 ? void 0 : options.COUNT) {
+    if (options?.COUNT) {
         args.push('COUNT', options.COUNT.toString());
     }
-    if (typeof (options === null || options === void 0 ? void 0 : options.BLOCK) === 'number') {
+    if (typeof options?.BLOCK === 'number') {
         args.push('BLOCK', options.BLOCK.toString());
     }
     args.push('STREAMS');

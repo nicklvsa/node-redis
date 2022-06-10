@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.pushSlotRangesArguments = exports.pushSortArguments = exports.transformFunctionListItemReply = exports.RedisFunctionFlags = exports.transformCommandReply = exports.CommandCategories = exports.CommandFlags = exports.pushOptionalVerdictArgument = exports.pushVerdictArgument = exports.pushVerdictNumberArguments = exports.pushVerdictArguments = exports.pushEvalArguments = exports.evalFirstKeyIndex = exports.transformPXAT = exports.transformEXAT = exports.transformGeoMembersWithReply = exports.GeoReplyWith = exports.pushGeoSearchArguments = exports.pushGeoCountArgument = exports.transformLMPopArguments = exports.transformZMPopArguments = exports.transformSortedSetWithScoresReply = exports.transformSortedSetMemberReply = exports.transformSortedSetMemberNullReply = exports.transformStreamsMessagesReply = exports.transformStreamMessagesReply = exports.transformTuplesReply = exports.transformStringNumberInfinityArgument = exports.transformNumberInfinityArgument = exports.transformNumberInfinityNullArrayReply = exports.transformNumberInfinityNullReply = exports.transformNumberInfinityReply = exports.pushScanArguments = exports.transformBooleanArrayReply = exports.transformBooleanReply = void 0;
+exports.transformRangeReply = exports.pushSlotRangesArguments = exports.pushSortArguments = exports.transformFunctionListItemReply = exports.RedisFunctionFlags = exports.transformCommandReply = exports.CommandCategories = exports.CommandFlags = exports.pushOptionalVerdictArgument = exports.pushVerdictArgument = exports.pushVerdictNumberArguments = exports.pushVerdictArguments = exports.pushEvalArguments = exports.evalFirstKeyIndex = exports.transformPXAT = exports.transformEXAT = exports.transformGeoMembersWithReply = exports.GeoReplyWith = exports.pushGeoRadiusStoreArguments = exports.pushGeoRadiusArguments = exports.pushGeoSearchArguments = exports.pushGeoCountArgument = exports.transformLMPopArguments = exports.transformZMPopArguments = exports.transformSortedSetWithScoresReply = exports.transformSortedSetMemberReply = exports.transformSortedSetMemberNullReply = exports.transformStreamsMessagesReply = exports.transformStreamMessagesReply = exports.transformTuplesReply = exports.transformStringNumberInfinityArgument = exports.transformNumberInfinityArgument = exports.transformNumberInfinityNullArrayReply = exports.transformNumberInfinityNullReply = exports.transformNumberInfinityReply = exports.pushScanArguments = exports.transformBooleanArrayReply = exports.transformBooleanReply = void 0;
 function transformBooleanReply(reply) {
     return reply === 1;
 }
@@ -11,10 +11,10 @@ function transformBooleanArrayReply(reply) {
 exports.transformBooleanArrayReply = transformBooleanArrayReply;
 function pushScanArguments(args, cursor, options) {
     args.push(cursor.toString());
-    if (options === null || options === void 0 ? void 0 : options.MATCH) {
+    if (options?.MATCH) {
         args.push('MATCH', options.MATCH);
     }
-    if (options === null || options === void 0 ? void 0 : options.COUNT) {
+    if (options?.COUNT) {
         args.push('COUNT', options.COUNT.toString());
     }
     return args;
@@ -113,7 +113,7 @@ exports.transformSortedSetWithScoresReply = transformSortedSetWithScoresReply;
 function transformZMPopArguments(args, keys, side, options) {
     pushVerdictArgument(args, keys);
     args.push(side);
-    if (options === null || options === void 0 ? void 0 : options.COUNT) {
+    if (options?.COUNT) {
         args.push('COUNT', options.COUNT.toString());
     }
     return args;
@@ -122,7 +122,7 @@ exports.transformZMPopArguments = transformZMPopArguments;
 function transformLMPopArguments(args, keys, side, options) {
     pushVerdictArgument(args, keys);
     args.push(side);
-    if (options === null || options === void 0 ? void 0 : options.COUNT) {
+    if (options?.COUNT) {
         args.push('COUNT', options.COUNT.toString());
     }
     return args;
@@ -156,13 +156,40 @@ function pushGeoSearchArguments(args, key, from, by, options) {
         args.push('BYBOX', by.width.toString(), by.height.toString());
     }
     args.push(by.unit);
-    if (options === null || options === void 0 ? void 0 : options.SORT) {
+    if (options?.SORT) {
         args.push(options.SORT);
     }
-    pushGeoCountArgument(args, options === null || options === void 0 ? void 0 : options.COUNT);
+    pushGeoCountArgument(args, options?.COUNT);
     return args;
 }
 exports.pushGeoSearchArguments = pushGeoSearchArguments;
+function pushGeoRadiusArguments(args, key, from, radius, unit, options) {
+    args.push(key);
+    if (typeof from === 'string') {
+        args.push(from);
+    }
+    else {
+        args.push(from.longitude.toString(), from.latitude.toString());
+    }
+    args.push(radius.toString(), unit);
+    if (options?.SORT) {
+        args.push(options.SORT);
+    }
+    pushGeoCountArgument(args, options?.COUNT);
+    return args;
+}
+exports.pushGeoRadiusArguments = pushGeoRadiusArguments;
+function pushGeoRadiusStoreArguments(args, key, from, radius, unit, destination, options) {
+    pushGeoRadiusArguments(args, key, from, radius, unit, options);
+    if (options?.STOREDIST) {
+        args.push('STOREDIST', destination);
+    }
+    else {
+        args.push('STORE', destination);
+    }
+    return args;
+}
+exports.pushGeoRadiusStoreArguments = pushGeoRadiusStoreArguments;
 var GeoReplyWith;
 (function (GeoReplyWith) {
     GeoReplyWith["DISTANCE"] = "WITHDIST";
@@ -203,18 +230,17 @@ function transformPXAT(PXAT) {
 }
 exports.transformPXAT = transformPXAT;
 function evalFirstKeyIndex(options) {
-    var _a;
-    return (_a = options === null || options === void 0 ? void 0 : options.keys) === null || _a === void 0 ? void 0 : _a[0];
+    return options?.keys?.[0];
 }
 exports.evalFirstKeyIndex = evalFirstKeyIndex;
 function pushEvalArguments(args, options) {
-    if (options === null || options === void 0 ? void 0 : options.keys) {
+    if (options?.keys) {
         args.push(options.keys.length.toString(), ...options.keys);
     }
     else {
         args.push('0');
     }
-    if (options === null || options === void 0 ? void 0 : options.arguments) {
+    if (options?.arguments) {
         args.push(...options.arguments);
     }
     return args;
@@ -332,21 +358,21 @@ function transformFunctionListItemReply(reply) {
 }
 exports.transformFunctionListItemReply = transformFunctionListItemReply;
 function pushSortArguments(args, options) {
-    if (options === null || options === void 0 ? void 0 : options.BY) {
+    if (options?.BY) {
         args.push('BY', options.BY);
     }
-    if (options === null || options === void 0 ? void 0 : options.LIMIT) {
+    if (options?.LIMIT) {
         args.push('LIMIT', options.LIMIT.offset.toString(), options.LIMIT.count.toString());
     }
-    if (options === null || options === void 0 ? void 0 : options.GET) {
+    if (options?.GET) {
         for (const pattern of (typeof options.GET === 'string' ? [options.GET] : options.GET)) {
             args.push('GET', pattern);
         }
     }
-    if (options === null || options === void 0 ? void 0 : options.DIRECTION) {
+    if (options?.DIRECTION) {
         args.push(options.DIRECTION);
     }
-    if (options === null || options === void 0 ? void 0 : options.ALPHA) {
+    if (options?.ALPHA) {
         args.push('ALPHA');
     }
     return args;
@@ -367,3 +393,10 @@ function pushSlotRangesArguments(args, ranges) {
     return args;
 }
 exports.pushSlotRangesArguments = pushSlotRangesArguments;
+function transformRangeReply([start, end]) {
+    return {
+        start,
+        end
+    };
+}
+exports.transformRangeReply = transformRangeReply;

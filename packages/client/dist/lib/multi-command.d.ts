@@ -8,7 +8,7 @@ export default class RedisMultiCommand {
     readonly queue: Array<RedisMultiQueuedCommand>;
     readonly scriptsInUse: Set<string>;
     addCommand(args: RedisCommandArguments, transformReply?: RedisCommand['transformReply']): void;
-    addFunction(fn: RedisFunction, args: Array<unknown>): RedisCommandArguments;
+    addFunction(name: string, fn: RedisFunction, args: Array<unknown>): RedisCommandArguments;
     addScript(script: RedisScript, args: Array<unknown>): RedisCommandArguments;
     exec(): undefined | Array<RedisMultiQueuedCommand>;
     handleExecReplies(rawReplies: Array<RedisCommandRawReply>): Array<RedisCommandRawReply>;

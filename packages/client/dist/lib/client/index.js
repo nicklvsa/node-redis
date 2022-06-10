@@ -86,7 +86,7 @@ class RedisClient extends events_1.EventEmitter {
                 return duplicate;
             },
             destroy: client => client.disconnect()
-        }, options === null || options === void 0 ? void 0 : options.isolationPoolOptions), "f");
+        }, options?.isolationPoolOptions), "f");
         __classPrivateFieldGet(this, _RedisClient_instances, "m", _RedisClient_legacyMode).call(this);
     }
     static commandOptions(options) {
@@ -96,11 +96,11 @@ class RedisClient extends events_1.EventEmitter {
         const Client = (0, commander_1.attachExtensions)({
             BaseClass: RedisClient,
             modulesExecutor: RedisClient.prototype.commandsExecutor,
-            modules: extensions === null || extensions === void 0 ? void 0 : extensions.modules,
+            modules: extensions?.modules,
             functionsExecutor: RedisClient.prototype.functionsExecuter,
-            functions: extensions === null || extensions === void 0 ? void 0 : extensions.functions,
+            functions: extensions?.functions,
             scriptsExecutor: RedisClient.prototype.scriptsExecuter,
-            scripts: extensions === null || extensions === void 0 ? void 0 : extensions.scripts
+            scripts: extensions?.scripts
         });
         if (Client !== RedisClient) {
             Client.prototype.Multi = multi_command_1.default.extend(extensions);
@@ -147,9 +147,11 @@ class RedisClient extends events_1.EventEmitter {
     get isOpen() {
         return __classPrivateFieldGet(this, _RedisClient_socket, "f").isOpen;
     }
+    get isReady() {
+        return __classPrivateFieldGet(this, _RedisClient_socket, "f").isReady;
+    }
     get v4() {
-        var _a;
-        if (!((_a = __classPrivateFieldGet(this, _RedisClient_options, "f")) === null || _a === void 0 ? void 0 : _a.legacyMode)) {
+        if (!__classPrivateFieldGet(this, _RedisClient_options, "f")?.legacyMode) {
             throw new Error('the client is not in "legacy mode"');
         }
         return __classPrivateFieldGet(this, _RedisClient_v4, "f");
@@ -170,19 +172,18 @@ class RedisClient extends events_1.EventEmitter {
     sendCommand(args, options) {
         return __classPrivateFieldGet(this, _RedisClient_instances, "m", _RedisClient_sendCommand).call(this, args, options);
     }
-    async functionsExecuter(fn, args) {
+    async functionsExecuter(fn, args, name) {
         const { args: redisArgs, options } = (0, commander_1.transformCommandArguments)(fn, args);
-        return (0, commander_1.transformCommandReply)(fn, await this.executeFunction(fn, redisArgs, options), redisArgs.preserve);
+        return (0, commander_1.transformCommandReply)(fn, await this.executeFunction(name, fn, redisArgs, options), redisArgs.preserve);
     }
-    executeFunction(fn, args, options) {
-        return __classPrivateFieldGet(this, _RedisClient_instances, "m", _RedisClient_sendCommand).call(this, (0, commander_1.fCallArguments)(fn, args), options);
+    executeFunction(name, fn, args, options) {
+        return __classPrivateFieldGet(this, _RedisClient_instances, "m", _RedisClient_sendCommand).call(this, (0, commander_1.fCallArguments)(name, fn, args), options);
     }
     async scriptsExecuter(script, args) {
         const { args: redisArgs, options } = (0, commander_1.transformCommandArguments)(script, args);
         return (0, commander_1.transformCommandReply)(script, await this.executeScript(script, redisArgs, options), redisArgs.preserve);
     }
     async executeScript(script, args, options) {
-        var _a, _b;
         const redisArgs = ['EVALSHA', script.SHA1];
         if (script.NUMBER_OF_KEYS !== undefined) {
             redisArgs.push(script.NUMBER_OF_KEYS.toString());
@@ -192,7 +193,7 @@ class RedisClient extends events_1.EventEmitter {
             return await __classPrivateFieldGet(this, _RedisClient_instances, "m", _RedisClient_sendCommand).call(this, redisArgs, options);
         }
         catch (err) {
-            if (!((_b = (_a = err === null || err === void 0 ? void 0 : err.message) === null || _a === void 0 ? void 0 : _a.startsWith) === null || _b === void 0 ? void 0 : _b.call(_a, 'NOSCRIPT'))) {
+            if (!err?.message?.startsWith?.('NOSCRIPT')) {
                 throw err;
             }
             redisArgs[0] = 'EVAL';
@@ -236,17 +237,18 @@ class RedisClient extends events_1.EventEmitter {
         return __classPrivateFieldGet(this, _RedisClient_isolationPool, "f").use(fn);
     }
     multi() {
-        var _a;
-        return new this.Multi(this.multiExecutor.bind(this), (_a = __classPrivateFieldGet(this, _RedisClient_options, "f")) === null || _a === void 0 ? void 0 : _a.legacyMode);
+        return new this.Multi(this.multiExecutor.bind(this), __classPrivateFieldGet(this, _RedisClient_options, "f")?.legacyMode);
     }
-    multiExecutor(commands, chainId) {
+    async multiExecutor(commands, selectedDB, chainId) {
         const promise = Promise.all(commands.map(({ args }) => {
-            return __classPrivateFieldGet(this, _RedisClient_queue, "f").addCommand(args, RedisClient.commandOptions({
-                chainId
-            }));
+            return __classPrivateFieldGet(this, _RedisClient_queue, "f").addCommand(args, { chainId });
         }));
         __classPrivateFieldGet(this, _RedisClient_instances, "m", _RedisClient_tick).call(this);
-        return promise;
+        const results = await promise;
+        if (selectedDB !== undefined) {
+            __classPrivateFieldSet(this, _RedisClient_selectedDB, selectedDB, "f");
+        }
+        return results;
     }
     async *scanIterator(options) {
         let cursor = 0;
@@ -296,38 +298,35 @@ class RedisClient extends events_1.EventEmitter {
 }
 exports.default = RedisClient;
 _RedisClient_options = new WeakMap(), _RedisClient_socket = new WeakMap(), _RedisClient_queue = new WeakMap(), _RedisClient_isolationPool = new WeakMap(), _RedisClient_v4 = new WeakMap(), _RedisClient_selectedDB = new WeakMap(), _RedisClient_instances = new WeakSet(), _RedisClient_initiateOptions = function _RedisClient_initiateOptions(options) {
-    if (options === null || options === void 0 ? void 0 : options.url) {
+    if (options?.url) {
         const parsed = RedisClient.parseURL(options.url);
         if (options.socket) {
             parsed.socket = Object.assign(options.socket, parsed.socket);
         }
         Object.assign(options, parsed);
     }
-    if (options === null || options === void 0 ? void 0 : options.database) {
+    if (options?.database) {
         __classPrivateFieldSet(this, _RedisClient_selectedDB, options.database, "f");
     }
     return options;
 }, _RedisClient_initiateQueue = function _RedisClient_initiateQueue() {
-    var _a;
-    return new commands_queue_1.default((_a = __classPrivateFieldGet(this, _RedisClient_options, "f")) === null || _a === void 0 ? void 0 : _a.commandsQueueMaxLength);
+    return new commands_queue_1.default(__classPrivateFieldGet(this, _RedisClient_options, "f")?.commandsQueueMaxLength);
 }, _RedisClient_initiateSocket = function _RedisClient_initiateSocket() {
-    var _a;
     const socketInitiator = async () => {
-        var _a, _b, _c, _d, _e;
         const promises = [];
         if (__classPrivateFieldGet(this, _RedisClient_selectedDB, "f") !== 0) {
             promises.push(__classPrivateFieldGet(this, _RedisClient_queue, "f").addCommand(['SELECT', __classPrivateFieldGet(this, _RedisClient_selectedDB, "f").toString()], { asap: true }));
         }
-        if ((_a = __classPrivateFieldGet(this, _RedisClient_options, "f")) === null || _a === void 0 ? void 0 : _a.readonly) {
+        if (__classPrivateFieldGet(this, _RedisClient_options, "f")?.readonly) {
             promises.push(__classPrivateFieldGet(this, _RedisClient_queue, "f").addCommand(commands_1.default.READONLY.transformArguments(), { asap: true }));
         }
-        if ((_b = __classPrivateFieldGet(this, _RedisClient_options, "f")) === null || _b === void 0 ? void 0 : _b.name) {
+        if (__classPrivateFieldGet(this, _RedisClient_options, "f")?.name) {
             promises.push(__classPrivateFieldGet(this, _RedisClient_queue, "f").addCommand(commands_1.default.CLIENT_SETNAME.transformArguments(__classPrivateFieldGet(this, _RedisClient_options, "f").name), { asap: true }));
         }
-        if (((_c = __classPrivateFieldGet(this, _RedisClient_options, "f")) === null || _c === void 0 ? void 0 : _c.username) || ((_d = __classPrivateFieldGet(this, _RedisClient_options, "f")) === null || _d === void 0 ? void 0 : _d.password)) {
+        if (__classPrivateFieldGet(this, _RedisClient_options, "f")?.username || __classPrivateFieldGet(this, _RedisClient_options, "f")?.password) {
             promises.push(__classPrivateFieldGet(this, _RedisClient_queue, "f").addCommand(commands_1.default.AUTH.transformArguments({
                 username: __classPrivateFieldGet(this, _RedisClient_options, "f").username,
-                password: (_e = __classPrivateFieldGet(this, _RedisClient_options, "f").password) !== null && _e !== void 0 ? _e : ''
+                password: __classPrivateFieldGet(this, _RedisClient_options, "f").password ?? ''
             }), { asap: true }));
         }
         const resubscribePromise = __classPrivateFieldGet(this, _RedisClient_queue, "f").resubscribe();
@@ -339,15 +338,14 @@ _RedisClient_options = new WeakMap(), _RedisClient_socket = new WeakMap(), _Redi
             await Promise.all(promises);
         }
     };
-    return new socket_1.default(socketInitiator, (_a = __classPrivateFieldGet(this, _RedisClient_options, "f")) === null || _a === void 0 ? void 0 : _a.socket)
+    return new socket_1.default(socketInitiator, __classPrivateFieldGet(this, _RedisClient_options, "f")?.socket)
         .on('data', chunk => __classPrivateFieldGet(this, _RedisClient_queue, "f").onReplyChunk(chunk))
         .on('error', err => {
-        var _a;
         process.nextTick(() => {
             console.log('using next tick');
             this.emit('error', err);
         });
-        if (__classPrivateFieldGet(this, _RedisClient_socket, "f").isOpen && !((_a = __classPrivateFieldGet(this, _RedisClient_options, "f")) === null || _a === void 0 ? void 0 : _a.disableOfflineQueue)) {
+        if (__classPrivateFieldGet(this, _RedisClient_socket, "f").isOpen && !__classPrivateFieldGet(this, _RedisClient_options, "f")?.disableOfflineQueue) {
             __classPrivateFieldGet(this, _RedisClient_queue, "f").flushWaitingForReply(err);
         }
         else {
@@ -364,8 +362,7 @@ _RedisClient_options = new WeakMap(), _RedisClient_socket = new WeakMap(), _Redi
         .on('drain', () => __classPrivateFieldGet(this, _RedisClient_instances, "m", _RedisClient_tick).call(this))
         .on('end', () => this.emit('end'));
 }, _RedisClient_legacyMode = function _RedisClient_legacyMode() {
-    var _a;
-    if (!((_a = __classPrivateFieldGet(this, _RedisClient_options, "f")) === null || _a === void 0 ? void 0 : _a.legacyMode))
+    if (!__classPrivateFieldGet(this, _RedisClient_options, "f")?.legacyMode)
         return;
     __classPrivateFieldGet(this, _RedisClient_v4, "f").sendCommand = __classPrivateFieldGet(this, _RedisClient_instances, "m", _RedisClient_sendCommand).bind(this);
     this.sendCommand = (...args) => {
@@ -415,7 +412,7 @@ _RedisClient_options = new WeakMap(), _RedisClient_socket = new WeakMap(), _Redi
     if (!__classPrivateFieldGet(this, _RedisClient_socket, "f").isOpen) {
         return Promise.reject(new errors_1.ClientClosedError());
     }
-    if (options === null || options === void 0 ? void 0 : options.isolated) {
+    if (options?.isolated) {
         return this.executeIsolated(isolatedClient => isolatedClient.sendCommand(args, {
             ...options,
             isolated: false

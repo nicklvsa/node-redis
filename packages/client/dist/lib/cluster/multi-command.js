@@ -34,35 +34,31 @@ class RedisClusterMultiCommand {
         return (0, commander_1.attachExtensions)({
             BaseClass: RedisClusterMultiCommand,
             modulesExecutor: RedisClusterMultiCommand.prototype.commandsExecutor,
-            modules: extensions === null || extensions === void 0 ? void 0 : extensions.modules,
+            modules: extensions?.modules,
             functionsExecutor: RedisClusterMultiCommand.prototype.functionsExecutor,
-            functions: extensions === null || extensions === void 0 ? void 0 : extensions.functions,
+            functions: extensions?.functions,
             scriptsExecutor: RedisClusterMultiCommand.prototype.scriptsExecutor,
-            scripts: extensions === null || extensions === void 0 ? void 0 : extensions.scripts
+            scripts: extensions?.scripts
         });
     }
     commandsExecutor(command, args) {
-        var _a;
         const transformedArguments = command.transformArguments(...args);
-        __classPrivateFieldSet(this, _RedisClusterMultiCommand_firstKey, (_a = __classPrivateFieldGet(this, _RedisClusterMultiCommand_firstKey, "f")) !== null && _a !== void 0 ? _a : _1.default.extractFirstKey(command, args, transformedArguments), "f");
+        __classPrivateFieldSet(this, _RedisClusterMultiCommand_firstKey, __classPrivateFieldGet(this, _RedisClusterMultiCommand_firstKey, "f") ?? _1.default.extractFirstKey(command, args, transformedArguments), "f");
         return this.addCommand(undefined, transformedArguments, command.transformReply);
     }
     addCommand(firstKey, args, transformReply) {
-        var _a;
-        __classPrivateFieldSet(this, _RedisClusterMultiCommand_firstKey, (_a = __classPrivateFieldGet(this, _RedisClusterMultiCommand_firstKey, "f")) !== null && _a !== void 0 ? _a : firstKey, "f");
+        __classPrivateFieldSet(this, _RedisClusterMultiCommand_firstKey, __classPrivateFieldGet(this, _RedisClusterMultiCommand_firstKey, "f") ?? firstKey, "f");
         __classPrivateFieldGet(this, _RedisClusterMultiCommand_multi, "f").addCommand(args, transformReply);
         return this;
     }
-    functionsExecutor(fn, args) {
-        var _a;
-        const transformedArguments = __classPrivateFieldGet(this, _RedisClusterMultiCommand_multi, "f").addFunction(fn, args);
-        __classPrivateFieldSet(this, _RedisClusterMultiCommand_firstKey, (_a = __classPrivateFieldGet(this, _RedisClusterMultiCommand_firstKey, "f")) !== null && _a !== void 0 ? _a : _1.default.extractFirstKey(fn, args, transformedArguments), "f");
+    functionsExecutor(fn, args, name) {
+        const transformedArguments = __classPrivateFieldGet(this, _RedisClusterMultiCommand_multi, "f").addFunction(name, fn, args);
+        __classPrivateFieldSet(this, _RedisClusterMultiCommand_firstKey, __classPrivateFieldGet(this, _RedisClusterMultiCommand_firstKey, "f") ?? _1.default.extractFirstKey(fn, args, transformedArguments), "f");
         return this;
     }
     scriptsExecutor(script, args) {
-        var _a;
         const transformedArguments = __classPrivateFieldGet(this, _RedisClusterMultiCommand_multi, "f").addScript(script, args);
-        __classPrivateFieldSet(this, _RedisClusterMultiCommand_firstKey, (_a = __classPrivateFieldGet(this, _RedisClusterMultiCommand_firstKey, "f")) !== null && _a !== void 0 ? _a : _1.default.extractFirstKey(script, args, transformedArguments), "f");
+        __classPrivateFieldSet(this, _RedisClusterMultiCommand_firstKey, __classPrivateFieldGet(this, _RedisClusterMultiCommand_firstKey, "f") ?? _1.default.extractFirstKey(script, args, transformedArguments), "f");
         return this;
     }
     async exec(execAsPipeline = false) {

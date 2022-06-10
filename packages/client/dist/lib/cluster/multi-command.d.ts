@@ -27,7 +27,7 @@ export default class RedisClusterMultiCommand {
     constructor(executor: RedisClusterMultiExecutor, firstKey?: RedisCommandArgument);
     commandsExecutor(command: RedisCommand, args: Array<unknown>): this;
     addCommand(firstKey: RedisCommandArgument | undefined, args: RedisCommandArguments, transformReply?: RedisCommand['transformReply']): this;
-    functionsExecutor(fn: RedisFunction, args: Array<unknown>): this;
+    functionsExecutor(fn: RedisFunction, args: Array<unknown>, name: string): this;
     scriptsExecutor(script: RedisScript, args: Array<unknown>): this;
     exec(execAsPipeline?: boolean): Promise<Array<RedisCommandRawReply>>;
     EXEC: (execAsPipeline?: boolean) => Promise<Array<RedisCommandRawReply>>;
