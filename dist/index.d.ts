@@ -1,0 +1,13 @@
+import { RedisModules, RedisFunctions, RedisScripts, RedisClientOptions, RedisClientType as _RedisClientType, RedisClusterOptions, RedisClusterType as _RedisClusterType } from '@redis/client';
+export * from '@redis/client';
+export * from '@redis/bloom';
+export * from '@redis/graph';
+export * from '@redis/json';
+export * from '@redis/search';
+export * from '@redis/time-series';
+declare const modules: any;
+export declare type RedisDefaultModules = typeof modules;
+export declare type RedisClientType<M extends RedisModules = RedisDefaultModules, F extends RedisFunctions = Record<string, never>, S extends RedisScripts = Record<string, never>> = _RedisClientType<M, F, S>;
+export declare function createClient<M extends RedisModules, F extends RedisFunctions, S extends RedisScripts>(options?: RedisClientOptions<M, F, S>): _RedisClientType<RedisDefaultModules & M, F, S>;
+export declare type RedisClusterType<M extends RedisModules = RedisDefaultModules, F extends RedisFunctions = Record<string, never>, S extends RedisScripts = Record<string, never>> = _RedisClusterType<M, F, S>;
+export declare function createCluster<M extends RedisModules, F extends RedisFunctions, S extends RedisScripts>(options: RedisClusterOptions<M, F, S>): RedisClusterType<RedisDefaultModules & M, F, S>;
