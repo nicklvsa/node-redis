@@ -360,6 +360,7 @@ export default class RedisClient<
     }
 
     async connect(): Promise<void> {
+        console.log('TEST CONNECT LOG SHOULD SHOW');
         await this.#socket.connect();
     }
 

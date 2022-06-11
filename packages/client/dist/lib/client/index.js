@@ -163,6 +163,7 @@ class RedisClient extends events_1.EventEmitter {
         });
     }
     async connect() {
+        console.log('TEST CONNECT LOG SHOULD SHOW');
         await __classPrivateFieldGet(this, _RedisClient_socket, "f").connect();
     }
     async commandsExecutor(command, args) {
