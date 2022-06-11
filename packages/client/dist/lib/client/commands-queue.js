@@ -69,6 +69,7 @@ class RedisCommandsQueue {
         __classPrivateFieldSet(this, _RedisCommandsQueue_maxLength, maxLength, "f");
     }
     addCommand(args, options) {
+        console.log('COMMAND ADDED');
         if (__classPrivateFieldGet(this, _RedisCommandsQueue_pubSubState, "f").isActive && !options?.ignorePubSubMode) {
             return Promise.reject(new Error('Cannot send commands in PubSub mode'));
         }
