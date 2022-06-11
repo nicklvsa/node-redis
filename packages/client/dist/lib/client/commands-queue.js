@@ -65,10 +65,10 @@ class RedisCommandsQueue {
                 }
             }
         }));
+        console.log('CONSTRUCTED');
         __classPrivateFieldSet(this, _RedisCommandsQueue_maxLength, maxLength, "f");
     }
     addCommand(args, options) {
-        console.log('NEW COMMAND ADDED TO THE QUEUE');
         if (__classPrivateFieldGet(this, _RedisCommandsQueue_pubSubState, "f").isActive && !options?.ignorePubSubMode) {
             return Promise.reject(new Error('Cannot send commands in PubSub mode'));
         }

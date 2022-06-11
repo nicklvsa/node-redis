@@ -128,12 +128,11 @@ export default class RedisCommandsQueue {
     });
 
     constructor(maxLength: number | null | undefined) {
+        console.log('CONSTRUCTED');
         this.#maxLength = maxLength;
     }
 
     addCommand<T = RedisCommandRawReply>(args: RedisCommandArguments, options?: QueueCommandOptions): Promise<T> {
-        console.log('NEW COMMAND ADDED TO THE QUEUE');
-
         if (this.#pubSubState.isActive && !options?.ignorePubSubMode) {
             return Promise.reject(new Error('Cannot send commands in PubSub mode'));
         } else if (this.#maxLength && this.#waitingToBeSent.length + this.#waitingForReply.length >= this.#maxLength) {
